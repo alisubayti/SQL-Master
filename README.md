@@ -2,7 +2,7 @@
 
 **A free, browser-based course that takes you from `SELECT *` to recursive CTEs and window functions — 277 hands-on problems, instant feedback, no signup, no install.**
 
-### ▶️ [Play it now → alisubayti.github.io/sql-master-game](https://alisubayti.github.io/sql-master-game/)
+### ▶️ [Play it now → alisubayti.github.io/SQL-Master](https://alisubayti.github.io/SQL-Master/)
 
 Write real SQL, run it against a real SQLite database in your browser, and get graded instantly. Everything runs client-side — your queries never leave your machine.
 
@@ -66,8 +66,8 @@ No server, no database to provision, no runtime dependencies. The whole app is s
 ## Run it locally
 
 ```bash
-git clone https://github.com/alisubayti/sql-master-game.git
-cd sql-master-game/docs
+git clone https://github.com/alisubayti/SQL-Master.git
+cd SQL-Master/docs
 python3 -m http.server 8000
 ```
 
