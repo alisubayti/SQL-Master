@@ -219,8 +219,10 @@ async function init() {
 initSqlJs().then(SQL_ => {
   SQL = SQL_;
   // If problems already loaded, all set; otherwise init() handles it
+  init();
 }).catch(e => {
   document.getElementById('loading').textContent = 'Failed to load sql.js: ' + e.message;
+  init();
 });
 
 // ═══════════════════════════════════════
