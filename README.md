@@ -1,99 +1,78 @@
-# SQL Master Game — Static Edition
+# SQL Master 🗄️
 
-**277 curated SQL problems** across 10 progressive levels. Runs entirely in the browser — no server, no install (except sql.js). Same content as the Flask version, ported to sql.js WebAssembly for standalone static deployment.
+**A free, browser-based course that takes you from `SELECT *` to recursive CTEs and window functions — 277 hands-on problems, instant feedback, no signup, no install.**
 
-## How to Run Locally
+### ▶️ [Play it now → alisubayti.github.io/sql-master-game](https://alisubayti.github.io/sql-master-game/)
 
-```bash
-cd sql-game-static/
-python3 -m http.server 8767
-```
+Write real SQL, run it against a real SQLite database in your browser, and get graded instantly. Everything runs client-side — your queries never leave your machine.
 
-Then open **http://localhost:8767** in your browser.
+---
 
-No Python dependencies. No Flask. No install. Just a browser and this folder.
+## What it is
+
+277 problems organized into 10 progressive levels, each building on the last. You write a query, it executes against an actual SQLite engine running in your browser (compiled to WebAssembly), and your result is compared against the expected output. Right or wrong, you know immediately.
+
+It's built to be *learned from*: hints when you're stuck, full solutions when you want them, and deliberately-placed "gotcha" problems that teach the traps real SQL throws at you (NULL handling, case sensitivity, the difference between `LIKE` and `=`).
+
+## The 10 levels
+
+| Level | Topic | Problems |
+|------:|-------|:--------:|
+| 1 | SELECT, WHERE, ORDER BY, LIKE, BETWEEN | 32 |
+| 2 | Sorting, NULLs & set operations | 26 |
+| 3 | Aggregation & grouping | 30 |
+| 4 | JOINs — inner, left, self, multi-table | 30 |
+| 5 | Subqueries | 30 |
+| 6 | String functions | 30 |
+| 7 | Date/time & CASE | 30 |
+| 8 | CTEs, including recursive | 23 |
+| 9 | Window functions | 24 |
+| 10 | Capstone — conditional aggregation & pivots | 22 |
+
+Each level ramps from a gentle introduction of the concept to problems that combine everything you've learned so far.
 
 ## Features
 
-- **10 levels** — SELECT basics → advanced window functions → capstone pivots
-- **Concept filters** — filter problems by topic within each level
-- **Instant feedback** — correct/incorrect with expected output comparison
-- **Progress tracking** — saved to `localStorage` (same key as the Flask version)
-- **Jump-to-problem** — grid view of all problems in the current level
-- **Next/Previous** — loops within the current level
-- **Quote auto-pairing** — `"` and `'` insert matching pairs automatically
-- **Autocomplete toggle** — off by default, opt-in for speed
-- **Float tolerance** — 6-decimal rounding on ordered and unordered comparisons
+- **Runs entirely in your browser** — real SQLite via WebAssembly, no backend, nothing to install
+- **Instant grading** — your query's output is compared against the expected result
+- **Hints & solutions** — toggle them when you want them, ignore them when you don't
+- **Jump to any problem** — grid view, no clicking through one at a time
+- **Concept filters** — drill into JOINs, GROUP BY, subqueries, and more within a level
+- **Progress saved locally** — your solved problems persist between sessions
+- **Quality-of-life touches** — auto-paired quotes, optional autocomplete
 
-## File Structure
+## How the grading works
 
-```
-sql-game-static/
-├── index.html          # Main application (single HTML file)
-├── problems.json       # 277 problems with schema, data, solutions
-├── sql-wasm.js         # sql.js v1.14.1 WebAssembly loader
-├── sql-wasm.wasm       # sql.js WASM binary (SQLite compiled to WebAssembly)
-├── verify_parity.py    # Parity test: proves JS engine matches Python
-├── README.md           # This file
-└── node_modules/       # sql.js for parity testing (not needed at runtime)
-```
+The interesting part. A correct query isn't just "returns the right rows" — the comparison engine handles the things that trip up naive checkers:
 
-## Deploy to Cloudflare Pages (Preferred)
+- **Order sensitivity** — problems that test `ORDER BY` verify row *sequence*; problems that don't are order-independent, so any correct ordering passes.
+- **Floating-point tolerance** — computed values (averages, running totals) compare within tolerance, so `61.24` and `61.2400001` aren't falsely marked wrong.
+- **NULL-safe comparison** — result sets containing NULLs compare correctly instead of crashing.
 
-1. Go to **Cloudflare Dashboard → Pages → Create a project**
-2. Connect your Git repository (or upload directly)
-3. **Build settings:** None needed — it's a static site
-   - Framework preset: **None**
-   - Build command: leave blank
-   - Build output directory: `.` (the root)
-4. Deploy. Your site will be live at `https://<project>.pages.dev`
+The browser grading engine is verified against a reference implementation: all 277 problems are run through both engines, with correct *and* deliberately-wrong queries, and every verdict must match. ([`verify_parity.py`](verify_parity.py))
 
-That's it. No build step. No config file needed.
+## Tech
 
-## Deploy to GitHub Pages
+| | |
+|---|---|
+| SQL engine | [sql.js](https://github.com/sql-js/sql.js) v1.14.1 (SQLite compiled to WebAssembly) |
+| Frontend | Single-file HTML/JS, no framework |
+| Hosting | Static — GitHub Pages |
+| Persistence | Browser `localStorage` |
+| Total size | ~1.1 MB |
 
-1. Push the `sql-game-static/` folder to a GitHub repository
-2. Go to **Settings → Pages**
-3. Source: **Deploy from a branch**
-4. Branch: `main`, folder: `sql-game-static/`
-5. Save. Your site will be live at `https://<username>.github.io/<repo>/`
+No server, no database to provision, no runtime dependencies. The whole app is static files.
 
-## Parity
-
-The `verify_parity.py` script proves the JS comparison engine (used in-browser) produces identical pass/fail verdicts as the Python reference engine (in `../sql-game/`). It runs all 277 problems through both engines with both correct and deliberately-wrong queries — **277×2 = 554 verdicts** must match.
+## Run it locally
 
 ```bash
-python3 verify_parity.py
+git clone https://github.com/alisubayti/sql-master-game.git
+cd sql-master-game/docs
+python3 -m http.server 8000
 ```
 
-This is the Stage 2 gate. It must pass 277/277 on correct solutions and 277/277 on wrong queries before any content changes.
+Then open `http://localhost:8000`.
 
-## Technical Details
+## License
 
-| Component | Technology |
-|-----------|-----------|
-| SQL Engine | sql.js v1.14.1 (SQLite 3.44+ via WebAssembly) |
-| Comparison | Ordered/unordered with float tolerance (1e-6) |
-| Persistence | `localStorage` key `sql_master_solved` |
-| Dependencies | None at runtime (sql.js WASM is self-contained) |
-| File size | ~1.1 MB total (.wasm is 645 KB, problems JSON is 399 KB) |
-
-## Level Map
-
-| Level | Topic | Problems |
-|-------|-------|----------|
-| 1 | SELECT, WHERE, ORDER BY, LIKE, BETWEEN | 32 |
-| 2 | ORDER BY, NULLs, Set Operations | 26 |
-| 3 | Aggregation & Grouping | 30 |
-| 4 | JOINs | 30 |
-| 5 | Subqueries | 30 |
-| 6 | String Functions | 30 |
-| 7 | Date/Time & CASE | 30 |
-| 8 | CTEs (incl. recursive) | 23 |
-| 9 | Window Functions | 24 |
-| 10 | Capstone (conditional aggregation, pivots) | 22 |
-| **Total** | | **277** |
-
-## Credits
-
-Built for the SQL Master Game project. Flask reference version preserved in `../sql-game/`.
+[MIT](LICENSE) — free to use, fork, and learn from.
