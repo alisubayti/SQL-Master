@@ -37,14 +37,13 @@ body{background:#0d1117;color:#c9d1d9;font:14px/1.5 -apple-system,BlinkMacSystem
 .pg{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
 .pg button{width:32px;height:28px;background:#161b22;border:1px solid #30363d;border-radius:4px;color:#8b949e;cursor:pointer;font-size:0.72em;transition:.1s;padding:0}
 .pg button:hover{border-color:#58a6ff;color:#c9d1d9}
-.pg button.act{border-color:#3fb950;color:#3fb950;background:#1a472a}
-.pg button.solved{color:#3fb950}
+.pg button.act{border-color:#58a6ff;color:#58a6ff;background:#1a3a5c}
+.pg button.solved{border-color:#3fb950;color:#3fb950;background:#1a472a}
+.pg button.act.solved{border-color:#58a6ff}
 
 /* Problem header */
 .ph{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:14px;margin-bottom:10px}
-.ph .desc{color:#c9d1d9;font-size:0.95em;margin-bottom:6px}
-.ph .meta{color:#8b949e;font-size:0.82em;display:flex;gap:12px;flex-wrap:wrap}
-.ph .meta .tag{color:#58a6ff}
+.ph .desc{color:#c9d1d9;font-size:0.95em}
 
 /* Schema tables */
 .st{background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:10px;margin-bottom:10px;font-size:0.78em;overflow-x:auto}
@@ -85,6 +84,13 @@ body{background:#0d1117;color:#c9d1d9;font:14px/1.5 -apple-system,BlinkMacSystem
 
 /* Loading */
 #loading{display:flex;align-items:center;justify-content:center;min-height:200px;color:#8b949e}
+
+/* Collapsible schema */
+.sw-hdr{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:8px 12px;cursor:pointer;color:#8b949e;font-size:0.85em;margin-bottom:10px;user-select:none;display:flex;align-items:center;gap:6px}
+.sw-hdr:hover{color:#c9d1d9;border-color:#58a6ff}
+.sw-arrow{transition:transform .2s;display:inline-block}
+.sw.closed .sw-arrow{transform:rotate(-90deg)}
+.sw.closed .st{display:none}
 </style>
 </head>
 <body>
@@ -106,7 +112,10 @@ body{background:#0d1117;color:#c9d1d9;font:14px/1.5 -apple-system,BlinkMacSystem
     <!-- Problem display -->
     <div id="probArea" style="display:none">
       <div class="ph" id="probHeader"></div>
-      <div class="st" id="schemaView"></div>
+      <div id="schemaWrap">
+        <div class="sw-hdr" id="schemaToggle"><span class="sw-arrow">▾</span> Schema & data</div>
+        <div class="st" id="schemaView"></div>
+      </div>
 
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <button class="eb" id="runBtn">▶ Run (Ctrl+Enter)</button>
@@ -276,9 +285,9 @@ function showProblem() {
   const p = filtered[currentIdx];
   const probNum = currentIdx + 1;
 
-  // Header — title removed, description only
+  // Header — description only, no metadata line
   const header = document.getElementById('probHeader');
-  header.innerHTML = `<div class="desc">${p.desc}</div><div class="meta"><span>#${p.id}</span><span class="tag">${p.concepts.join(', ')}</span><span>${probNum}/${filtered.length}</span></div>`;
+  header.innerHTML = `<div class="desc">${p.desc}</div>`;
 
   document.getElementById('sqlInput').value = '';
   document.getElementById('resultBox').innerHTML = '';
@@ -486,6 +495,7 @@ document.getElementById('nextBtn').onclick = nextProblem;
 document.getElementById('hintBtn').onclick = () => document.getElementById('hintBox').classList.toggle('show');
 document.getElementById('solutionBtn').onclick = () => document.getElementById('solutionBox').classList.toggle('show');
 document.getElementById('homeBtn').onclick = goHome;
+document.getElementById('schemaToggle').onclick = () => document.getElementById('schemaWrap').classList.toggle('closed');
 </script>
 </body>
 </html>
